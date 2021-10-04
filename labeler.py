@@ -113,7 +113,7 @@ class LabelerApplication(object):
     def get_next_serial(self):
         """
         Starting point for you to integrate your connection to the database. Feel free to define elsewhere
-        As impelemented, get_next_serial should be a string
+        As impelemented, the output of get_next_serial should be a string
         """
         return '{:05d}'.format(random.randrange(99999))
 
