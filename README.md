@@ -1,4 +1,4 @@
-#Manufacturing Software Engineer Takehome
+# Manufacturing Software Engineer Takehome
 
 # Instructions
 This challenge is a simplified representation of a project you may encounter at Walden.. You are welcome to consult outside sources (including me, please ask clarification questions!), but please list any reference materials that you use. Your answer will be the starting point for a larger discussion during the technical screen. Keep in mind that the goal of this exercise is for you to demonstrate how you approach problems. Getting to the ‘correct’ answer is less important than explaining your process, laying out your assumptions, and being able to defend your decisions.
@@ -30,7 +30,7 @@ Each label contains a barcode, which encodes information about the package:
 Assume that the weigh/label process is error prone, and operators have a tendency to double-print labels or misweigh labels. Therefore, the system needs a way to mark which labels correspond to real product. A downstream application (omitted for simplicity) guides operators through scanning packages into a case, weighing the case, and printing a label for the case. 
 
 # Part 1a
-Your task is to design and implement a schema to store information from the packing process, and write an implementation for reading and writing from the database.  We have provisioned a table for you in a MYSQL database, and will share credentials with you separately.
+Your task is to design and implement a schema to store information from the packing process, and write an implementation for reading and writing from the database. You are welcome to use any tools, databases, or libraries you deem appropriate including postgres, mysql, alembic, SQLAlchemy, redis, etc. Don't worry about provisioning a fully 'production ready' system, but you should be able to sketch how you would scale up your solution to a production enivornment. 
 
 Your design should meet the following requirements:
 - Multiple instances of the application can maintain connections to the database, and simultaneously read and write data
