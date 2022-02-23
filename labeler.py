@@ -1,19 +1,20 @@
-from tkinter import messagebox, ttk, font
+from tkinter import messagebox, ttk
 import tkinter as tk
 import random 
 import re
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from db.models import PackageModel, ProductModel
 
 class LabelerApplication(object):
 
     def __init__(self, root):
         self.root = root
-        #TODO: Initialize connection to database
-        
-        self.product_map = {
-                            'Chicken Legs': '13242',
-                            'Chicken Breast': '13247',
-                            'Chicken Whole': '13249',
-                           }
+
+        # Connect to db
+        self.db_session = sessionmaker(bind=create_engine('sqlite:///db/labeler.db'))
+        self.all_products = []
 
         self.build_ui(self.root)
 
@@ -42,7 +43,15 @@ class LabelerApplication(object):
                                  textvar=self.product_var,
                                  width=20,
                                  font=('Arial', 16))
-        self.product_picker['values'] = list(self.product_map.keys())
+
+        with self.db_session() as session:
+            self.all_products = session.query(ProductModel).all()
+
+            product_names = []
+            for product in self.all_products:
+                product_names.append(product.name)
+
+        self.product_picker['values'] = product_names
         self.product_picker.grid(row=1, column=0, columnspan=2)
 
         # lot entry (user manually types)
@@ -78,8 +87,9 @@ class LabelerApplication(object):
     def get_product(self):
         product_name = self.product_var.get()
         try:
-            product_code = self.product_map[product_name]
-        except KeyError:
+            product = next(product for product in self.all_products if product.name == product_name)
+            product_code = str(product.unique_code)
+        except StopIteration:
             messagebox.showinfo('WARNING', 'Unable to find product: {}'.format(product_name))
             self.product_var.set('')
             return None
@@ -107,15 +117,28 @@ class LabelerApplication(object):
             self.weight_var.set('')
             return None
 
-        weight = '{:04d}'.format(int(weight*100))
         return weight
 
-    def get_next_serial(self):
-        """
-        Starting point for you to integrate your connection to the database. Feel free to define elsewhere
-        As impelemented, the output of get_next_serial should be a string
-        """
-        return '{:05d}'.format(random.randrange(99999))
+    def generate_cut_id(self):
+        with self.db_session() as session:
+            package_count = session.query(PackageModel).count()
+            return str(package_count + 1).zfill(5) 
+
+    def create_package(self, cut_id, lot_code, weight, product_code):
+        package = PackageModel(
+            cut_id=cut_id, 
+            lot_code=lot_code, 
+            weight=weight, 
+            product_code=product_code
+        )
+
+        with self.db_session() as session:
+            session.add(package)
+            session.commit()
+            session.refresh(package)
+    
+        return package
+
 
     def generate_label(self, *args):
         """
@@ -134,12 +157,11 @@ class LabelerApplication(object):
         if weight == None:
             return
 
-        serial = self.get_next_serial()
-        if serial == None:
-            return
+        cut_id = self.generate_cut_id()
 
-        assembled_barcode= product_code+lot_code+weight+serial
-        messagebox.showinfo('INFO', 'Printing barcode: {}'.format(assembled_barcode))
+        package = self.create_package(cut_id, lot_code, weight, product_code)
+
+        messagebox.showinfo('INFO', 'Printing barcode: {}'.format(package.barcode))
         self.weight_var.set('')
         return 
 
