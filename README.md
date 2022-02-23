@@ -1,3 +1,42 @@
+# Tyler's Response
+
+## Local Requirements
+
+- Pipenv
+- SQLite
+
+## Getting Started
+
+1. `cd factory-interview`
+2. `pipenv shell` (Activate Python environment)
+3. `pipenv install` (Install requirements - Alembic, SQLAlchemy)
+4. `alembic upgrade head` (Run latest migration to setup/seed db)
+5. `python labeler.py`
+
+## Part 1b - Recommendations
+
+### Maintenance
+
+- Agile CI deployment strategy
+- Tkinter GUI versioning
+- Dedicated remote DB instance
+
+### Features
+
+- Simple form validation, input masking
+- Barcode scanner at packaging step to validate package
+- Collect other data points (operator, timing, etc)
+
+## Resources
+
+- https://www.youtube.com/watch?v=nt5sSr1A_qw&t=929s (Setting up Alembic with SQLAlchemy)
+- https://docs.sqlalchemy.org/en/14/
+- https://alembic.sqlalchemy.org/en/latest/
+
+## <br />
+
+---
+
 # Manufacturing Software Engineer Takehome
 
 # Instructions
